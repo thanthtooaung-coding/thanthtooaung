@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import {
   Code,
   Database,
@@ -25,7 +25,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { useEffect } from 'react';
-import { usePortfolioStore } from '@/store/portfolio-store';
+import { usePortfolioStore } from '../../store/portfolio-store';
 
 export default function Component() {
   const { activeSection, mousePosition, setActiveSection, setMousePosition } =
