@@ -24,6 +24,8 @@ import {
   Coffee,
   Terminal,
   Activity,
+  Menu,
+  X,
 } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
@@ -31,10 +33,12 @@ import { Points, PointMaterial, Float, Sphere, MeshDistortMaterial, Environment 
 import type * as THREE from "three"
 import { usePortfolioStore } from "../../store/portfolio-store"
 
-// Floating particles component
+// Floating particles component with mobile optimization
 function FloatingParticles() {
   const ref = useRef<THREE.Points>(null)
-  const particlesCount = 2000
+  // Reduce particles on mobile for better performance
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+  const particlesCount = isMobile ? 1000 : 2000
 
   const positions = new Float32Array(particlesCount * 3)
   for (let i = 0; i < particlesCount; i++) {
@@ -98,8 +102,9 @@ function Scene() {
   )
 }
 
-export default function EnhancedPortfolio() {
-  const { activeSection, mousePosition, setActiveSection, setMousePosition } = usePortfolioStore()
+export default function Portfolio() {
+  const { activeSection, mousePosition, isMobileMenuOpen, setActiveSection, setMousePosition, setMobileMenuOpen } =
+    usePortfolioStore()
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -108,6 +113,12 @@ export default function EnhancedPortfolio() {
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [setMousePosition])
+
+  // Close mobile menu when section changes
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section)
+    setMobileMenuOpen(false)
+  }
 
   const skills = {
     languages: ["Java", "Python", "C/C++", "Go", "SQL", "NoSQL", "JavaScript", "TypeScript", "HTML/CSS"],
@@ -236,6 +247,14 @@ export default function EnhancedPortfolio() {
     { label: "Coffee Consumed", value: "∞", icon: Coffee },
   ]
 
+  const navigationItems = [
+    { id: "about", label: "About", icon: Briefcase },
+    { id: "experience", label: "Experience", icon: Briefcase },
+    { id: "projects", label: "Projects", icon: Code },
+    { id: "education", label: "Education", icon: GraduationCap },
+    { id: "skills", label: "Skills", icon: Terminal },
+  ]
+
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Three.js Background */}
@@ -254,7 +273,7 @@ export default function EnhancedPortfolio() {
 
         {/* Interactive mouse follower with enhanced glassmorphism */}
         <div
-          className="absolute w-96 h-96 bg-gradient-radial from-cyan-500/10 via-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none transition-all duration-700 ease-out"
+          className="absolute w-96 h-96 bg-gradient-radial from-cyan-500/10 via-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none transition-all duration-700 ease-out hidden md:block"
           style={{
             left: mousePosition.x - 192,
             top: mousePosition.y - 192,
@@ -269,9 +288,112 @@ export default function EnhancedPortfolio() {
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:80px_80px] opacity-20"></div>
       </div>
 
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-gray-900/80 border-b border-white/10 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-lg flex items-center justify-center border border-white/20 overflow-hidden">
+              <img
+                src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg"
+                alt="Thant Htoo Aung Profile"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-sm">Thant Htoo Aung</h2>
+              <p className="text-gray-400 text-xs">Java Developer</p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white hover:bg-white/10"
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 backdrop-blur-3xl bg-gray-900/95">
+          <div className="pt-20 p-6">
+            {/* Mobile Profile Section */}
+            <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-2xl mb-6">
+              <CardContent className="p-6 text-center">
+                <div className="relative mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl mx-auto flex items-center justify-center shadow-xl border border-white/20 overflow-hidden">
+                    <img
+                      src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg"
+                      alt="Thant Htoo Aung Profile"
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-gray-800 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                <h2 className="text-lg font-bold mb-1 text-white">Thant Htoo Aung</h2>
+                <p className="text-gray-300 text-sm mb-4 font-medium">Mid Level Java Developer</p>
+
+                {/* Mobile Social Links */}
+                <div className="flex gap-3 justify-center mb-4">
+                  <Button
+                    size="sm"
+                    className="bg-blue-600/30 hover:bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl"
+                    onClick={() => window.open("https://www.linkedin.com/in/thant-htoo-aung-", "_blank")}
+                  >
+                    <Linkedin className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-gray-700/30 hover:bg-gray-700/50 text-white border border-gray-600/30 backdrop-blur-xl"
+                    onClick={() => window.open("https://github.com/thanthtooaung-coding", "_blank")}
+                  >
+                    <Github className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Mobile Download CV Button */}
+                <Button className="w-full bg-gradient-to-r from-cyan-600/50 to-blue-600/50 hover:from-cyan-600/70 hover:to-blue-600/70 text-white shadow-lg border border-cyan-500/30 backdrop-blur-xl">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download CV
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Mobile Navigation */}
+            <nav className="space-y-2">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSectionChange(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg transition-all font-medium text-lg ${
+                    activeSection === item.id
+                      ? "bg-gradient-to-r from-cyan-600/30 to-blue-600/30 text-white border border-cyan-500/30 shadow-lg backdrop-blur-xl"
+                      : "text-gray-300 hover:bg-white/10 hover:text-white backdrop-blur-sm"
+                  }`}
+                >
+                  <item.icon
+                    className={`w-6 h-6 transition-colors duration-300 ${
+                      activeSection === item.id ? "text-cyan-400" : ""
+                    }`}
+                  />
+                  <span>{item.label}</span>
+                  {activeSection === item.id && (
+                    <div className="ml-auto w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
       <div className="relative z-20 flex min-h-screen">
-        {/* Enhanced Glassmorphism Sidebar */}
-        <div className="w-80 p-6 backdrop-blur-3xl bg-gray-900/30 border-r border-white/10 shadow-2xl">
+        {/* Desktop Sidebar - Hidden on Mobile */}
+        <div className="hidden lg:block w-80 p-6 backdrop-blur-3xl bg-gray-900/30 border-r border-white/10 shadow-2xl">
           <div className="space-y-6">
             {/* Enhanced Profile Section */}
             <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-2xl hover:bg-white/10 transition-all duration-500 group">
@@ -279,7 +401,7 @@ export default function EnhancedPortfolio() {
                 <div className="relative mb-6">
                   <div className="w-20 h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl mx-auto flex items-center justify-center shadow-xl border border-white/20 group-hover:scale-105 transition-transform duration-300 overflow-hidden">
                     <img
-                      src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg?height=80&width=80"
+                      src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg"
                       alt="Thant Htoo Aung Profile"
                       className="w-full h-full object-cover rounded-xl"
                     />
@@ -347,13 +469,7 @@ export default function EnhancedPortfolio() {
 
             {/* Enhanced Navigation */}
             <nav className="space-y-2">
-              {[
-                { id: "about", label: "About", icon: Briefcase },
-                { id: "experience", label: "Experience", icon: Briefcase },
-                { id: "projects", label: "Projects", icon: Code },
-                { id: "education", label: "Education", icon: GraduationCap },
-                { id: "skills", label: "Skills", icon: Terminal },
-              ].map((item) => (
+              {navigationItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
@@ -379,29 +495,29 @@ export default function EnhancedPortfolio() {
         </div>
 
         {/* Enhanced Main Content */}
-        <div className="flex-1 p-8 overflow-y-auto">
-          <div className="max-w-5xl mx-auto space-y-8">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pt-20 lg:pt-8">
+          <div className="max-w-5xl mx-auto space-y-6 lg:space-y-8">
             {/* About Section */}
             {activeSection === "about" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
+              <div className="space-y-6 lg:space-y-8 animate-in fade-in duration-500">
                 {/* Enhanced Hero Card */}
                 <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-2xl hover:bg-white/10 transition-all duration-500 group">
-                  <CardContent className="p-8">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                  <CardContent className="p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                         <img
-                          src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg?height=56&width=56"
+                          src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg"
                           alt="Thant Htoo Aung Profile"
                           className="w-full h-full object-cover rounded-xl"
                         />
                       </div>
-                      <div>
-                        <h1 className="text-4xl font-bold text-white mb-1">About Me</h1>
-                        <p className="text-gray-300 text-lg">Full Stack Developer & Problem Solver</p>
+                      <div className="text-center sm:text-left">
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">About Me</h1>
+                        <p className="text-gray-300 text-base lg:text-lg">Full Stack Developer & Problem Solver</p>
                       </div>
                     </div>
 
-                    <div className="space-y-4 text-gray-300 leading-relaxed text-lg">
+                    <div className="space-y-4 text-gray-300 leading-relaxed text-base lg:text-lg">
                       <p>
                         I'm a passionate <span className="text-white font-semibold">Mid Level Java Developer</span> with
                         extensive experience in full-stack development, specializing in Java Spring Boot, Angular,
@@ -421,30 +537,30 @@ export default function EnhancedPortfolio() {
                 </Card>
 
                 {/* Enhanced Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                   {stats.map((stat, index) => (
                     <Card
                       key={index}
                       className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-500 group hover:scale-105"
                     >
-                      <CardContent className="p-6 text-center">
-                        <stat.icon className="w-8 h-8 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                        <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                        <div className="text-sm text-gray-300">{stat.label}</div>
+                      <CardContent className="p-4 lg:p-6 text-center">
+                        <stat.icon className="w-6 h-6 lg:w-8 lg:h-8 text-cyan-400 mx-auto mb-2 lg:mb-3 group-hover:scale-110 transition-transform duration-300" />
+                        <div className="text-xl lg:text-2xl font-bold text-white mb-1">{stat.value}</div>
+                        <div className="text-xs lg:text-sm text-gray-300">{stat.label}</div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
 
                 {/* Enhanced Info Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                   <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-500 group hover:scale-105">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <MapPin className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
-                        <span className="font-semibold text-white text-lg">Location & Availability</span>
+                        <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="font-semibold text-white text-base lg:text-lg">Location & Availability</span>
                       </div>
-                      <div className="space-y-3 text-gray-300">
+                      <div className="space-y-3 text-gray-300 text-sm lg:text-base">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                           <span>Remote / Bangkok, Thailand</span>
@@ -464,10 +580,10 @@ export default function EnhancedPortfolio() {
                   <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-500 group hover:scale-105">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <Activity className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
-                        <span className="font-semibold text-white text-lg">Current Focus</span>
+                        <Activity className="w-5 h-5 lg:w-6 lg:h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="font-semibold text-white text-base lg:text-lg">Current Focus</span>
                       </div>
-                      <div className="space-y-3 text-gray-300">
+                      <div className="space-y-3 text-gray-300 text-sm lg:text-base">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
                           <span>Full-stack development</span>
@@ -489,14 +605,14 @@ export default function EnhancedPortfolio() {
 
             {/* Experience Section */}
             {activeSection === "experience" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
-                    <Briefcase className="w-7 h-7 text-cyan-400" />
+              <div className="space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+                <div className="flex items-center gap-4 mb-6 lg:mb-8">
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
+                    <Briefcase className="w-6 h-6 lg:w-7 lg:h-7 text-cyan-400" />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-bold text-white mb-1">Experience</h2>
-                    <p className="text-gray-300 text-lg">Professional journey and achievements</p>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">Experience</h2>
+                    <p className="text-gray-300 text-base lg:text-lg">Professional journey and achievements</p>
                   </div>
                 </div>
 
@@ -506,26 +622,26 @@ export default function EnhancedPortfolio() {
                     className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-xl hover:bg-white/10 transition-all duration-500 group hover:scale-105"
                   >
                     <CardHeader className="pb-4">
-                      <div className="flex justify-between items-start">
+                      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <CardTitle className="text-2xl text-white">{exp.title}</CardTitle>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                            <CardTitle className="text-xl lg:text-2xl text-white">{exp.title}</CardTitle>
                             {exp.type === "Current" && (
-                              <Badge className="bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl">
+                              <Badge className="bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl w-fit">
                                 <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
                                 Current
                               </Badge>
                             )}
                           </div>
-                          <p className="text-gray-300 font-semibold text-lg mb-2">{exp.company}</p>
+                          <p className="text-gray-300 font-semibold text-base lg:text-lg mb-2">{exp.company}</p>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-cyan-400" />
-                            <p className="text-gray-300">{exp.location}</p>
+                            <p className="text-gray-300 text-sm lg:text-base">{exp.location}</p>
                           </div>
                         </div>
                         <Badge
                           variant="secondary"
-                          className="bg-white/10 text-gray-300 border border-white/20 px-4 py-2 backdrop-blur-xl"
+                          className="bg-white/10 text-gray-300 border border-white/20 px-3 lg:px-4 py-2 backdrop-blur-xl text-xs lg:text-sm w-fit"
                         >
                           {exp.period}
                         </Badge>
@@ -536,7 +652,7 @@ export default function EnhancedPortfolio() {
                         {exp.achievements.map((achievement, i) => (
                           <li
                             key={i}
-                            className="text-gray-300 flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors backdrop-blur-sm"
+                            className="text-gray-300 flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors backdrop-blur-sm text-sm lg:text-base"
                           >
                             <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
                             <span className="leading-relaxed">{achievement}</span>
@@ -551,14 +667,14 @@ export default function EnhancedPortfolio() {
 
             {/* Projects Section */}
             {activeSection === "projects" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
-                    <Code className="w-7 h-7 text-cyan-400" />
+              <div className="space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+                <div className="flex items-center gap-4 mb-6 lg:mb-8">
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
+                    <Code className="w-6 h-6 lg:w-7 lg:h-7 text-cyan-400" />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-bold text-white mb-1">Projects</h2>
-                    <p className="text-gray-300 text-lg">Featured work and contributions</p>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">Projects</h2>
+                    <p className="text-gray-300 text-base lg:text-lg">Featured work and contributions</p>
                   </div>
                 </div>
 
@@ -568,18 +684,18 @@ export default function EnhancedPortfolio() {
                     className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-xl hover:bg-white/10 transition-all duration-500 group hover:scale-105"
                   >
                     <CardHeader className="pb-4">
-                      <div className="flex justify-between items-start">
+                      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <CardTitle className="text-2xl text-white flex items-center gap-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                            <CardTitle className="text-xl lg:text-2xl text-white flex items-center gap-2">
                               {project.title}
-                              <ExternalLink className="w-5 h-5 text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors group-hover:scale-110" />
+                              <ExternalLink className="w-4 h-4 lg:w-5 lg:h-5 text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors group-hover:scale-110" />
                             </CardTitle>
                             <Badge
                               className={
                                 project.status === "Active"
-                                  ? "bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl"
-                                  : "bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl"
+                                  ? "bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl w-fit"
+                                  : "bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl w-fit"
                               }
                             >
                               {project.status === "Active" && (
@@ -593,7 +709,7 @@ export default function EnhancedPortfolio() {
                               <Badge
                                 key={i}
                                 variant="outline"
-                                className="bg-white/5 text-gray-300 border-white/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
+                                className="bg-white/5 text-gray-300 border-white/20 hover:bg-white/10 transition-colors backdrop-blur-sm text-xs"
                               >
                                 {tech}
                               </Badge>
@@ -602,7 +718,7 @@ export default function EnhancedPortfolio() {
                         </div>
                         <Badge
                           variant="secondary"
-                          className="bg-white/10 text-gray-300 border border-white/20 px-4 py-2 backdrop-blur-xl"
+                          className="bg-white/10 text-gray-300 border border-white/20 px-3 lg:px-4 py-2 backdrop-blur-xl text-xs lg:text-sm w-fit"
                         >
                           {project.period}
                         </Badge>
@@ -613,14 +729,14 @@ export default function EnhancedPortfolio() {
                         {project.description.map((desc, i) => (
                           <li
                             key={i}
-                            className="text-gray-300 flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors backdrop-blur-sm"
+                            className="text-gray-300 flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors backdrop-blur-sm text-sm lg:text-base"
                           >
                             <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
                             <span className="leading-relaxed">{desc}</span>
                           </li>
                         ))}
                       </ul>
-                      <div className="flex gap-3">
+                      <div className="flex flex-col sm:flex-row gap-3">
                         <Button
                           size="sm"
                           className="bg-gradient-to-r from-cyan-600/50 to-blue-600/50 hover:from-cyan-600/70 hover:to-blue-600/70 text-white border border-cyan-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300"
@@ -645,14 +761,14 @@ export default function EnhancedPortfolio() {
 
             {/* Education Section */}
             {activeSection === "education" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
-                    <GraduationCap className="w-7 h-7 text-cyan-400" />
+              <div className="space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+                <div className="flex items-center gap-4 mb-6 lg:mb-8">
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
+                    <GraduationCap className="w-6 h-6 lg:w-7 lg:h-7 text-cyan-400" />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-bold text-white mb-1">Education</h2>
-                    <p className="text-gray-300 text-lg">Academic background and certifications</p>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">Education</h2>
+                    <p className="text-gray-300 text-base lg:text-lg">Academic background and certifications</p>
                   </div>
                 </div>
 
@@ -661,18 +777,18 @@ export default function EnhancedPortfolio() {
                     key={index}
                     className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-xl hover:bg-white/10 transition-all duration-500 group hover:scale-105"
                   >
-                    <CardContent className="p-8">
-                      <div className="flex justify-between items-start">
+                    <CardContent className="p-6 lg:p-8">
+                      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <h3 className="text-2xl font-bold text-white">{edu.institution}</h3>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                            <h3 className="text-xl lg:text-2xl font-bold text-white">{edu.institution}</h3>
                             <Badge
                               className={
                                 edu.status === "Current"
-                                  ? "bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl"
+                                  ? "bg-emerald-600/50 text-white border border-emerald-500/30 backdrop-blur-xl w-fit"
                                   : edu.status === "Certified"
-                                    ? "bg-amber-600/50 text-white border border-amber-500/30 backdrop-blur-xl"
-                                    : "bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl"
+                                    ? "bg-amber-600/50 text-white border border-amber-500/30 backdrop-blur-xl w-fit"
+                                    : "bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl w-fit"
                               }
                             >
                               {edu.status === "Current" && (
@@ -681,15 +797,15 @@ export default function EnhancedPortfolio() {
                               {edu.status}
                             </Badge>
                           </div>
-                          <p className="text-gray-300 font-semibold text-lg mb-2">{edu.degree}</p>
+                          <p className="text-gray-300 font-semibold text-base lg:text-lg mb-2">{edu.degree}</p>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-cyan-400" />
-                            <p className="text-gray-300">{edu.location}</p>
+                            <p className="text-gray-300 text-sm lg:text-base">{edu.location}</p>
                           </div>
                         </div>
                         <Badge
                           variant="secondary"
-                          className="bg-white/10 text-gray-300 border border-white/20 px-4 py-2 backdrop-blur-xl"
+                          className="bg-white/10 text-gray-300 border border-white/20 px-3 lg:px-4 py-2 backdrop-blur-xl text-xs lg:text-sm w-fit"
                         >
                           {edu.period}
                         </Badge>
@@ -702,47 +818,47 @@ export default function EnhancedPortfolio() {
 
             {/* Skills Section */}
             {activeSection === "skills" && (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
-                    <Terminal className="w-7 h-7 text-cyan-400" />
+              <div className="space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+                <div className="flex items-center gap-4 mb-6 lg:mb-8">
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
+                    <Terminal className="w-6 h-6 lg:w-7 lg:h-7 text-cyan-400" />
                   </div>
                   <div>
-                    <h2 className="text-4xl font-bold text-white mb-1">Technical Skills</h2>
-                    <p className="text-gray-300 text-lg">Technologies and tools I work with</p>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">Technical Skills</h2>
+                    <p className="text-gray-300 text-base lg:text-lg">Technologies and tools I work with</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                   {Object.entries(skills).map(([category, skillList]) => (
                     <Card
                       key={category}
                       className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-xl hover:bg-white/10 transition-all duration-500 group hover:scale-105"
                     >
                       <CardHeader className="pb-4">
-                        <CardTitle className="text-xl capitalize flex items-center gap-3">
+                        <CardTitle className="text-lg lg:text-xl capitalize flex items-center gap-3">
                           {category === "languages" && (
-                            <Code className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
+                            <Code className="w-5 h-5 lg:w-6 lg:h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
                           )}
                           {category === "frameworks" && (
-                            <Globe className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                            <Globe className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
                           )}
                           {category === "tools" && (
-                            <Server className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+                            <Server className="w-5 h-5 lg:w-6 lg:h-6 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
                           )}
                           {category === "libraries" && (
-                            <Database className="w-6 h-6 text-orange-400 group-hover:scale-110 transition-transform duration-300" />
+                            <Database className="w-5 h-5 lg:w-6 lg:h-6 text-orange-400 group-hover:scale-110 transition-transform duration-300" />
                           )}
                           <span className="text-white font-semibold">{category}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2 lg:gap-3">
                           {skillList.map((skill, index) => (
                             <Badge
                               key={index}
                               variant="secondary"
-                              className="bg-white/5 text-gray-300 border border-white/20 hover:bg-white/10 hover:text-white transition-all cursor-pointer px-3 py-1 backdrop-blur-sm hover:scale-105 duration-300"
+                              className="bg-white/5 text-gray-300 border border-white/20 hover:bg-white/10 hover:text-white transition-all cursor-pointer px-2 lg:px-3 py-1 backdrop-blur-sm hover:scale-105 duration-300 text-xs lg:text-sm"
                             >
                               {skill}
                             </Badge>
