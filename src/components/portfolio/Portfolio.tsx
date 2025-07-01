@@ -307,13 +307,15 @@ export default function EnhancedPortfolio() {
                 <div className="flex gap-3 mb-4">
                   <Button
                     size="sm"
-                    className="bg-blue-600/30 hover:bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300"
+                    className="bg-blue-600/30 hover:bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                    onClick={() => window.open("https://www.linkedin.com/in/thant-htoo-aung-", "_blank")}
                   >
                     <Linkedin className="w-4 h-4" />
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-gray-700/30 hover:bg-gray-700/50 text-white border border-gray-600/30 backdrop-blur-xl hover:scale-105 transition-all duration-300"
+                    className="bg-gray-700/30 hover:bg-gray-700/50 text-white border border-gray-600/30 backdrop-blur-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                    onClick={() => window.open("https://github.com/thanthtooaung-coding", "_blank")}
                   >
                     <Github className="w-4 h-4" />
                   </Button>
