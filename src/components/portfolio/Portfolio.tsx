@@ -1,3 +1,5 @@
+"use client"
+
 import { Badge } from "../../components/ui/badge"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -12,7 +14,6 @@ import {
   MapPin,
   Phone,
   Server,
-  User,
   Briefcase,
   Globe,
   Download,
@@ -97,7 +98,7 @@ function Scene() {
   )
 }
 
-export default function Portfolio() {
+export default function EnhancedPortfolio() {
   const { activeSection, mousePosition, setActiveSection, setMousePosition } = usePortfolioStore()
 
   useEffect(() => {
@@ -244,14 +245,14 @@ export default function Portfolio() {
         </Canvas>
       </div>
 
-      {/*  Glassmorphism Background Effects */}
+      {/* Enhanced Glassmorphism Background Effects */}
       <div className="absolute inset-0 overflow-hidden z-10">
         {/* Dynamic gradient orbs */}
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-emerald-500/15 to-teal-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-gradient-to-br from-purple-500/10 to-pink-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
 
-        {/* Interactive mouse follower with glassmorphism */}
+        {/* Interactive mouse follower with enhanced glassmorphism */}
         <div
           className="absolute w-96 h-96 bg-gradient-radial from-cyan-500/10 via-blue-500/5 to-transparent rounded-full blur-2xl pointer-events-none transition-all duration-700 ease-out"
           style={{
@@ -261,7 +262,7 @@ export default function Portfolio() {
           }}
         ></div>
 
-        {/*  tech grid pattern */}
+        {/* Enhanced tech grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:60px_60px] opacity-30"></div>
 
         {/* Diagonal lines for extra tech feel */}
@@ -269,15 +270,19 @@ export default function Portfolio() {
       </div>
 
       <div className="relative z-20 flex min-h-screen">
-        {/*  Glassmorphism Sidebar */}
+        {/* Enhanced Glassmorphism Sidebar */}
         <div className="w-80 p-6 backdrop-blur-3xl bg-gray-900/30 border-r border-white/10 shadow-2xl">
           <div className="space-y-6">
-            {/*  Profile Section */}
+            {/* Enhanced Profile Section */}
             <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-2xl hover:bg-white/10 transition-all duration-500 group">
               <CardContent className="p-6 text-center">
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl mx-auto flex items-center justify-center shadow-xl border border-white/20 group-hover:scale-105 transition-transform duration-300">
-                    <User className="w-10 h-10 text-cyan-400" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl mx-auto flex items-center justify-center shadow-xl border border-white/20 group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                    <img
+                      src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg?height=80&width=80"
+                      alt="Thant Htoo Aung Profile"
+                      className="w-full h-full object-cover rounded-xl"
+                    />
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-gray-800 flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -286,7 +291,7 @@ export default function Portfolio() {
                 <h2 className="text-xl font-bold mb-1 text-white">Thant Htoo Aung</h2>
                 <p className="text-gray-300 text-sm mb-4 font-medium">Mid Level Java Developer</p>
 
-                {/*  Contact Info */}
+                {/* Enhanced Contact Info */}
                 <div className="space-y-3 text-sm mb-6">
                   <div className="flex items-center gap-3 text-gray-300 hover:text-cyan-400 transition-colors p-2 rounded-lg hover:bg-white/5 backdrop-blur-sm">
                     <Phone className="w-4 h-4 text-cyan-400" />
@@ -298,25 +303,23 @@ export default function Portfolio() {
                   </div>
                 </div>
 
-                {/*  Social Links */}
+                {/* Enhanced Social Links */}
                 <div className="flex gap-3 mb-4">
                   <Button
                     size="sm"
-                    className="bg-blue-600/30 hover:bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-                    onClick={() => window.open("https://github.com/thanthtooaung-coding", "_blank")}
+                    className="bg-blue-600/30 hover:bg-blue-600/50 text-white border border-blue-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300"
                   >
                     <Linkedin className="w-4 h-4" />
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-gray-700/30 hover:bg-gray-700/50 text-white border border-gray-600/30 backdrop-blur-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-                    onClick={() => window.open("https://github.com/thanthtooaung-coding", "_blank")}
+                    className="bg-gray-700/30 hover:bg-gray-700/50 text-white border border-gray-600/30 backdrop-blur-xl hover:scale-105 transition-all duration-300"
                   >
                     <Github className="w-4 h-4" />
                   </Button>
                 </div>
 
-                {/*  Download CV Button */}
+                {/* Enhanced Download CV Button */}
                 <Button className="w-full bg-gradient-to-r from-cyan-600/50 to-blue-600/50 hover:from-cyan-600/70 hover:to-blue-600/70 text-white shadow-lg border border-cyan-500/30 backdrop-blur-xl hover:scale-105 transition-all duration-300">
                   <Download className="w-4 h-4 mr-2" />
                   Download CV
@@ -324,7 +327,7 @@ export default function Portfolio() {
               </CardContent>
             </Card>
 
-            {/*  Stats Cards */}
+            {/* Enhanced Stats Cards */}
             <div className="grid grid-cols-2 gap-3">
               {stats.slice(0, 2).map((stat, index) => (
                 <Card
@@ -340,10 +343,10 @@ export default function Portfolio() {
               ))}
             </div>
 
-            {/*  Navigation */}
+            {/* Enhanced Navigation */}
             <nav className="space-y-2">
               {[
-                { id: "about", label: "About", icon: User },
+                { id: "about", label: "About", icon: Briefcase },
                 { id: "experience", label: "Experience", icon: Briefcase },
                 { id: "projects", label: "Projects", icon: Code },
                 { id: "education", label: "Education", icon: GraduationCap },
@@ -373,18 +376,22 @@ export default function Portfolio() {
           </div>
         </div>
 
-        {/*  Main Content */}
+        {/* Enhanced Main Content */}
         <div className="flex-1 p-8 overflow-y-auto">
           <div className="max-w-5xl mx-auto space-y-8">
             {/* About Section */}
             {activeSection === "about" && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                {/*  Hero Card */}
+                {/* Enhanced Hero Card */}
                 <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white shadow-2xl hover:bg-white/10 transition-all duration-500 group">
                   <CardContent className="p-8">
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300">
-                        <User className="w-7 h-7 text-cyan-400" />
+                      <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                        <img
+                          src="https://i.pinimg.com/736x/48/06/7f/48067f233fdfc65f3c73dd166af75e39.jpg?height=56&width=56"
+                          alt="Thant Htoo Aung Profile"
+                          className="w-full h-full object-cover rounded-xl"
+                        />
                       </div>
                       <div>
                         <h1 className="text-4xl font-bold text-white mb-1">About Me</h1>
@@ -411,7 +418,7 @@ export default function Portfolio() {
                   </CardContent>
                 </Card>
 
-                {/*  Stats Grid */}
+                {/* Enhanced Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {stats.map((stat, index) => (
                     <Card
@@ -427,7 +434,7 @@ export default function Portfolio() {
                   ))}
                 </div>
 
-                {/*  Info Cards */}
+                {/* Enhanced Info Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card className="backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-500 group hover:scale-105">
                     <CardContent className="p-6">
@@ -438,7 +445,7 @@ export default function Portfolio() {
                       <div className="space-y-3 text-gray-300">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                          <span>Remote / London, UK</span>
+                          <span>Remote / Bangkok, Thailand</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
